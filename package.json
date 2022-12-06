@@ -23,6 +23,7 @@
   "devDependencies": {
     "@parcel/transformer-sass": "^2.6.0",
     "axios": "^1.2.1",
+    "buffer": "^6.0.3",
     "infinite-scroll": "^4.0.1",
     "notiflix": "^3.2.5",
     "parcel": "^2.6.0",
