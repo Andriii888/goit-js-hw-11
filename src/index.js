@@ -1,15 +1,12 @@
-import Notiflix from 'notiflix';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
-import { fetchPosts } from './fetch_fn';
+import APIServis from './servis';
 import Notiflix from 'notiflix';
-// import card from './card.hbs';
-const Handlebars = require("handlebars");
+const newAPIServis = new APIServis();
 const axios = require('axios');
-
 // axios({
 //   method: 'get',
-//   url: BASE_URL,
+//   url: newAPIServis.BASE_URL,
 //   data: '',
 // });
 
@@ -32,38 +29,91 @@ Notiflix.Notify.init({
 });
 
 const inputValueRef = document.querySelector('#search-form');
-const galleryBoxRef = document.querySelector('.gallery container');
+const galleryBoxRef = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
+let lightbox = new SimpleLightbox('.gallery a', { /* options */ });
 
-inputValueRef.addEventListener('submit', e => {
+
+inputValueRef.addEventListener('submit', onSearch);
+loadMoreBtn.addEventListener('click', loadMoreImg);
+
+function onSearch(e) {
     e.preventDefault();
+    clearContent();
+    loadMoreBtn.disabled = false;
      const {
     elements: { searchQuery }
   } = e.currentTarget;
-    let inputValue = searchQuery.value;
-    fetchPosts(inputValue).then(seachedValue => {
-                 console.log(seachedValue)
-        return createPosts(seachedValue);
+    newAPIServis.inpValue = searchQuery.value;
+    newAPIServis.resetPage();
+
+    
+
+    newAPIServis.fetchPosts().then(seachedValue => {
+        let totalHits = seachedValue.totalHits;
+        Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+
+        createPosts(seachedValue);
     })
         .catch((error) => {
             console.log(error);
              Notiflix.Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
         });
 
-});
+};
 
 
-function createPosts(val) { 
-    const elementPosts = val.map((post) =>{
-        let marcup = card(post)
+function createPosts(val) {
+    if (val.hits.length === 0) {
+        Notiflix.Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
+    }
+    if (!val.totalHits) {
+        Notiflix.Notify.failure(`We're sorry, but you've reached the end of search results.`);
+    }
+
+    const elementPosts = val.hits.map(
+        ({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
+        return `<div class="photo-card post">
+    <a>
+    <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+    </a>
+    <div class="info">
+        <p class="info-item">
+            <b>Likes:${likes}</b>
+        </p>
+        <p class="info-item">
+            <b>Views:${views}</b>
+        </p>
+        <p class="info-item">
+            <b>Comments:${comments}</b>
+        </p>
+        <p class="info-item">
+            <b>Downloads:${downloads}</b>
+        </p>
+    </div>
+</div>`
     }
       
     ).join("");
-    return listOfCountriesRef.insertAdjacentHTML('beforeend', elementPosts);
+    // var lightbox = $('.gallery a').simpleLightbox({ /* options */ });
+    return galleryBoxRef.insertAdjacentHTML('beforeend', elementPosts);
 };
 
 function clearContent() {
-    boxForCountry.innerHTML = '';
-    listOfCountriesRef.innerHTML = '';
-}
+    galleryBoxRef.innerHTML = '';
+};
+
+
+function loadMoreImg() {
+    newAPIServis.fetchPosts().then(seachedValue => {
+        createPosts(seachedValue);
+    })
+        .catch((error) => {
+            console.log(error.message);
+            if (error.message = 400) {
+             Notiflix.Notify.failure(`We're sorry, but you've reached the end of search results.`);   
+            }
+             Notiflix.Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
+        });
+};
 
