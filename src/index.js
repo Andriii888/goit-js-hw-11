@@ -18,12 +18,7 @@ Notiflix.Notify.init({
     backOverlayColor: 'rgba(238,191,49,0.2)',
   },
 });
-// new SimpleLightbox('.photo-card a', {
-//       scrollZoom: false,
-//     captionsData: "alt",
-//     captionDelay: 250,
 
-// });
 const inputValueRef = document.querySelector('#search-form');
 const galleryBoxRef = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
@@ -64,9 +59,6 @@ async function onSearch(e) {
            createPosts(data);
            createSmoothScroll();
 
-           //////////////////////////////////////////
-        
-///////////////////////////////////
         })
     }
         catch (error) {
@@ -76,7 +68,7 @@ async function onSearch(e) {
 
 };
 
-
+////////////////////////////////////////////////////////////////////////
 function createPosts(val) {
     const elementPosts = val.hits.map(
         ({ webformatURL, largeImageURL, tags, likes, views, comments, downloads },index) => {
@@ -114,12 +106,12 @@ function createPosts(val) {
 
 }).refresh();
 };
-
+//////////////////////////////////////////////////
 function clearContent() {
     galleryBoxRef.innerHTML = '';
 };
 
-
+/////////////////////////////////////////////
 async function loadMoreImg() {
     try {
         await newAPIServis.fetchPosts().then(({ data }) => {
@@ -131,13 +123,14 @@ async function loadMoreImg() {
     }
         catch (error)  {
             console.log(error.message);
-            if (error.message = 400) {
+        if (error.message = 400) {
+                loadMoreBtn.disabled = true;
             return Notiflix.Notify.failure(`We're sorry, but you've reached the end of search results.`);   
             }
              Notiflix.Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
         };
 };
-
+//////////////////////////////////////////////////////////
 function createSmoothScroll() {
    const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
            window.scrollBy({ top: cardHeight * 1, behavior: "smooth", });
