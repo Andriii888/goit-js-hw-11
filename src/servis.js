@@ -1,31 +1,31 @@
-export default class APIServis {
-    constructor() {
-        this.inputValue = '';
-        this.pageValue = 1;
-        this.BASE_URL = 'https://pixabay.com/api/';
+import axios from 'axios';
 
-    }
-    fetchPosts() {
-        console.log(this);
-        const options = new URLSearchParams({
+export default class APIServis {
+       constructor() {
+        this.inputValue = 'dog';
+        this.pageValue = 1;
+           this.BASE_URL = 'https://pixabay.com/api/';
+           this.options = {
             key: '31883823-c5d59f7aa30a446f4e70a3159',
             image_type: 'photo',
             orientation: 'horizontal',
             safesearch: 'true',
             per_page: 40,
-        });
-        return fetch(`${this.BASE_URL}?q=${this.inputValue}&page=${this.pageValue}&${options}`)
-            .then(response => {
-                if (!response.ok) {
-               
-                    throw new Error(response.status);
-                }
-                return response.json()
-            }).then(seachedValue => {
-       this.pageValue += 1;
-   
-                return seachedValue;
-    })
+        };
+    }
+    fetchPosts() {
+        return axios.get(`${this.BASE_URL}`,
+            {
+             params: {
+                    key: '31883823-c5d59f7aa30a446f4e70a3159',
+                 q:this.inputValue,
+                 page:this.pageValue,
+            image_type: 'photo',
+            orientation: 'horizontal',
+            safesearch: 'true',
+                per_page: 40,
+            }
+            })
     }
     resetPage() {
         this.pageValue = 1;
@@ -40,15 +40,26 @@ export default class APIServis {
     get page() {
         return this.page;
     }
-    set page(newPage) {
+    set incrementPage(newPage) {
         this.page = newPage;  
     }
 
+// then(response => {
+//                 if (!response.ok) {
+               
+//                     throw new Error(response.status);
+//                 }
+//                 return response.json()
+//             })
 
+// ?q=${this.inputValue}&page=${this.pageValue}&${this.options}`
 
-
-
-
+// .then(seachedValue => {
+//                 console.log(seachedValue);
+//        this.pageValue += 1;
+   
+//                 return seachedValue;
+//     })
 
 
 

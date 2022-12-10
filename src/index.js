@@ -1,17 +1,9 @@
-import SimpleLightbox from "simplelightbox";
+const lightBox = require('simplelightbox');
 import "simplelightbox/dist/simple-lightbox.min.css";
 import APIServis from './servis';
 import Notiflix from 'notiflix';
 const newAPIServis = new APIServis();
-const axios = require('axios');
-// axios({
-//   method: 'get',
-//   url: newAPIServis.BASE_URL,
-//   data: '',
-// });
 
-    
-// let debounce = require('lodash.debounce');
 
 
 Notiflix.Notify.init({
@@ -27,11 +19,16 @@ Notiflix.Notify.init({
     backOverlayColor: 'rgba(238,191,49,0.2)',
   },
 });
+const galleryBox = new SimpleLightbox('.gallery a', {
+      scrollZoom: false,
+    captionsData: "alt",
+    captionDelay: 250,
+
+});
 
 const inputValueRef = document.querySelector('#search-form');
 const galleryBoxRef = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
-let lightbox = new SimpleLightbox('.gallery a', { /* options */ });
 
 
 inputValueRef.addEventListener('submit', onSearch);
@@ -46,14 +43,13 @@ function onSearch(e) {
   } = e.currentTarget;
     newAPIServis.inpValue = searchQuery.value;
     newAPIServis.resetPage();
-
-    
-
-    newAPIServis.fetchPosts().then(seachedValue => {
-        let totalHits = seachedValue.totalHits;
+ 
+    newAPIServis.fetchPosts().then(({ data }) => {
+        let totalHits = data.totalHits;
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+     newAPIServis.pageValue += 1;
 
-        createPosts(seachedValue);
+        createPosts(data);
     })
         .catch((error) => {
             console.log(error);
@@ -105,8 +101,10 @@ function clearContent() {
 
 
 function loadMoreImg() {
-    newAPIServis.fetchPosts().then(seachedValue => {
-        createPosts(seachedValue);
+    newAPIServis.fetchPosts().then(({ data }) => {
+                newAPIServis.pageValue += 1;
+
+        createPosts(data);
     })
         .catch((error) => {
             console.log(error.message);
@@ -115,5 +113,5 @@ function loadMoreImg() {
             }
              Notiflix.Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
         });
-};
+}
 
