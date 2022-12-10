@@ -26,6 +26,8 @@
     "buffer": "^6.0.3",
     "handlebars": "^4.7.7",
     "infinite-scroll": "^4.0.1",
+    "lodash": "^4.17.21",
+    "lodash.throttle": "^4.1.1",
     "notiflix": "^3.2.5",
     "parcel": "^2.6.0",
     "parcel-reporter-clean-dist": "^1.0.4",

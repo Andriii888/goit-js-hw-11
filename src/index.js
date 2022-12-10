@@ -3,7 +3,7 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 import APIServis from './servis';
 import Notiflix from 'notiflix';
 const newAPIServis = new APIServis();
-
+let throttleForScrole = require('lodash');
 
 Notiflix.Notify.init({
     borderRadius: '10px',
@@ -22,18 +22,22 @@ Notiflix.Notify.init({
 const inputValueRef = document.querySelector('#search-form');
 const galleryBoxRef = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
-// let elemForInfinitScrole = document.querySelector('.container');
-// let infScroll = new InfiniteScroll( elemForInfinitScrole, {
-//   // options
-// //   path: '.pagination__next',
-// //   append: '.post',
-// //   history: false,
-// });
-
 
 
 inputValueRef.addEventListener('submit', onSearch);
 loadMoreBtn.addEventListener('click', loadMoreImg);
+
+//  window.addEventListener('scroll',onScroleLoadImg);
+//  function onScroleLoadImg(e) {
+     
+//      const endOfPage = document.body.offsetHeight - window.pageYOffset;
+//      console.log(endOfPage);
+//      if (endOfPage <700) {
+//          console.log(endOfPage);
+//         return loadMoreImg();
+//              }
+   
+// };
 
 async function onSearch(e) {
     try {
