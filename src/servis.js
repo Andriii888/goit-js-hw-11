@@ -44,28 +44,10 @@ export default class APIServis {
         this.page = newPage;  
     }
 
-// then(response => {
-//                 if (!response.ok) {
-               
-//                     throw new Error(response.status);
-//                 }
-//                 return response.json()
-//             })
-
-// ?q=${this.inputValue}&page=${this.pageValue}&${this.options}`
-
-// .then(seachedValue => {
-//                 console.log(seachedValue);
-//        this.pageValue += 1;
-   
-//                 return seachedValue;
-//     })
 
 
 
-
-
-
+    
 }
 
     

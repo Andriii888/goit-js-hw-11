@@ -18,12 +18,12 @@ Notiflix.Notify.init({
     backOverlayColor: 'rgba(238,191,49,0.2)',
   },
 });
-new SimpleLightbox('.photo-card a', {
-      scrollZoom: false,
-    captionsData: "alt",
-    captionDelay: 250,
+// new SimpleLightbox('.photo-card a', {
+//       scrollZoom: false,
+//     captionsData: "alt",
+//     captionDelay: 250,
 
-});
+// });
 const inputValueRef = document.querySelector('#search-form');
 const galleryBoxRef = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
@@ -104,19 +104,15 @@ function createPosts(val) {
     </div>
 </div>`
           
-}
-      
-    ).join("");
+}).join("");
    
-    // lightbox.refresh();
-    
-     galleryBoxRef.insertAdjacentHTML('beforeend', elementPosts);
+    galleryBoxRef.insertAdjacentHTML('beforeend', elementPosts);
    return new SimpleLightbox('.photo-card a', {
       scrollZoom: false,
     captionsData: "alt",
     captionDelay: 250,
 
-});
+}).refresh();
 };
 
 function clearContent() {
@@ -144,7 +140,7 @@ async function loadMoreImg() {
 
 function createSmoothScroll() {
    const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
-           window.scrollBy({ top: cardHeight * 0.5, behavior: "smooth", });
+           window.scrollBy({ top: cardHeight * 1, behavior: "smooth", });
 };
 /////////////////////////////////////////////////////////
 // async function loadNextPage() {
