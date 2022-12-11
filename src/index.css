@@ -16,9 +16,13 @@ img{
 .load-more{
    margin: 0 auto;
    display: block;
+   
 }
 .search-form{
      display: flex;
      justify-content: center;
    
+}
+.opacity{
+    opacity:0;
 }

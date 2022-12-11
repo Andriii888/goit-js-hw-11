@@ -2,8 +2,8 @@ const lightBox = require('simplelightbox');
 import "simplelightbox/dist/simple-lightbox.min.css";
 import APIServis from './servis';
 import Notiflix from 'notiflix';
+import { entries } from "lodash";
 const newAPIServis = new APIServis();
-let throttleForScrole = require('lodash');
 
 Notiflix.Notify.init({
     borderRadius: '10px',
@@ -26,31 +26,25 @@ const loadMoreBtn = document.querySelector('.load-more');
 
 inputValueRef.addEventListener('submit', onSearch);
 loadMoreBtn.addEventListener('click', loadMoreImg);
-/////////////////////////////////////////////////
- async function onScroleLoadImg(e) {
-     try{ const endOfPage = (window.scrollY + window.innerHeight);
-
-     if (endOfPage >= document.body.scrollHeight) {
-        await loadMoreImg();
-             }} catch (error) {
-            console.log(error);}
-    
-   
-};
+///////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 async function onSearch(e) {
     try {
         e.preventDefault();
         clearContent();
-        loadMoreBtn.disabled = false;
-        const {
+                const {
             elements: { searchQuery }
         } = e.currentTarget;
         newAPIServis.inpValue = searchQuery.value;
         newAPIServis.resetPage();
  
-       await newAPIServis.fetchPosts().then(({ data }) => {
-           let totalHits = data.totalHits;
+        await newAPIServis.fetchPosts().then(({ data }) => {
+             let totalHits = data.totalHits;
+            if (totalHits > 40) {
+                loadMoreBtn.classList.toggle('opacity');
+            }
+
+          
             if (data.hits.length === 0) {
         Notiflix.Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
     }
@@ -61,11 +55,6 @@ async function onSearch(e) {
 
            createPosts(data);
            createSmoothScroll();
-           window.addEventListener('scroll', _.throttle(() => {
-               onScroleLoadImg();
-           },1000));
-
-
         })
     }
         catch (error) {
@@ -79,7 +68,7 @@ async function onSearch(e) {
 function createPosts(val) {
     const elementPosts = val.hits.map(
         ({ webformatURL, largeImageURL, tags, likes, views, comments, downloads },index) => {
-            return `<div class="photo-card post">
+            return `<div class="photo-card">
             <a href="${largeImageURL}">
         <img src="${webformatURL}" alt="${tags}" loading="lazy" />
         </a>
@@ -123,9 +112,13 @@ async function loadMoreImg() {
     try {
         await newAPIServis.fetchPosts().then(({ data }) => {
             newAPIServis.pageValue += 1;
-
             createPosts(data);
             createSmoothScroll();
+             const endOfImg = data.totalHits / 40;
+            if (newAPIServis.pageValue > endOfImg) {
+               loadMoreBtn.classList.toggle('opacity');
+                return Notiflix.Notify.failure(`We're sorry, but you've reached the end of search results.`);
+            } 
         })
     }
         catch (error)  {
@@ -143,21 +136,3 @@ function createSmoothScroll() {
            window.scrollBy({ top: cardHeight * 1, behavior: "smooth", });
 };
 /////////////////////////////////////////////////////////
-// async function loadNextPage() {
-//     try {
-//         await newAPIServis.fetchPosts().then(({ data }) => {
-//             newAPIServis.pageValue += 1;
-
-//             createPosts(data);
-//             createSmoothScroll();
-//         })
-//     }
-//         catch (error)  {
-//             console.log(error.message);
-//             if (error.message = 400) {
-//             return Notiflix.Notify.failure(`We're sorry, but you've reached the end of search results.`);   
-//             }
-//              Notiflix.Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
-//         };
-// };
-// infScroll.loadNextPage();
