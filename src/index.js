@@ -27,17 +27,16 @@ const loadMoreBtn = document.querySelector('.load-more');
 inputValueRef.addEventListener('submit', onSearch);
 loadMoreBtn.addEventListener('click', loadMoreImg);
 
-//  window.addEventListener('scroll',onScroleLoadImg);
-//  function onScroleLoadImg(e) {
-     
-//      const endOfPage = document.body.offsetHeight - window.pageYOffset;
-//      console.log(endOfPage);
-//      if (endOfPage <700) {
-//          console.log(endOfPage);
-//         return loadMoreImg();
-//              }
+ async function onScroleLoadImg(e) {
+     try{ const endOfPage = (window.scrollY + window.innerHeight);
+
+     if (endOfPage >= document.body.scrollHeight) {
+        await loadMoreImg();
+             }} catch (error) {
+            console.log(error);}
+    
    
-// };
+};
 
 async function onSearch(e) {
     try {
@@ -62,6 +61,8 @@ async function onSearch(e) {
 
            createPosts(data);
            createSmoothScroll();
+            window.addEventListener('scroll',onScroleLoadImg);
+
 
         })
     }
