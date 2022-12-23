@@ -4,6 +4,8 @@ import APIServis from './servis';
 import Notiflix from 'notiflix';
 import { entries } from "lodash";
 const newAPIServis = new APIServis();
+let throttleForScrole = require('lodash');
+
 
 Notiflix.Notify.init({
     borderRadius: '10px',
@@ -25,8 +27,30 @@ const loadMoreBtn = document.querySelector('.load-more');
 
 
 inputValueRef.addEventListener('submit', onSearch);
-loadMoreBtn.addEventListener('click', loadMoreImg);
+// loadMoreBtn.addEventListener('click', loadMoreImg);
 ///////////////////////////////////////////////////
+let options = {
+    // root: document.querySelector('body'),
+    threshold: 1,
+    rootMargin: "100px",
+};
+function observerLastCardCallback(entries) {
+    const lastCard = entries[0];
+    console.log(lastCard.isIntersecting);
+    if (!lastCard.isIntersecting) return 
+    loadMoreImg();
+    console.log(document.querySelector('.photo-card:last-child'));
+    observerLastCard.unobserve(lastCard.target);
+    
+     observerLastCard.observe(document.querySelector('.photo-card:last-child'));
+     console.log(document.querySelector('.photo-card:last-child'));
+
+ 
+
+};
+let observerLastCard = new IntersectionObserver(_.throttle(observerLastCardCallback,2000), options);
+
+
 /////////////////////////////////////////////////////
 async function onSearch(e) {
     try {
@@ -40,9 +64,9 @@ async function onSearch(e) {
  
         await newAPIServis.fetchPosts().then(({ data }) => {
              let totalHits = data.totalHits;
-            if (totalHits > 40) {
-                loadMoreBtn.classList.toggle('opacity');
-            }
+            // if (totalHits > 40) {
+            //     loadMoreBtn.classList.toggle('opacity');
+            // }
 
           
             if (data.hits.length === 0) {
@@ -54,7 +78,11 @@ async function onSearch(e) {
             newAPIServis.pageValue += 1;
 
            createPosts(data);
-           createSmoothScroll();
+            createSmoothScroll();
+            ///////////////////////////////////
+             observerLastCard.observe(document.querySelector('.photo-card:last-child'));
+            ////////////////////////////////////
+
         })
     }
         catch (error) {
